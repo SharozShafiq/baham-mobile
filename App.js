@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, SectionList, TextInput, Button } from 'react-native';
 import AppHeader from './AppHeader';
 import AppFooter from './AppFooter';
-import Login from './Login';
+//import Login from './Login';
 
 const allVehicles = [ 
   {
@@ -92,7 +92,6 @@ export default function App() {
   return (
     <View style={styles.container}>
       <AppHeader heading={heading} />
-      <Login />
       <View style={styles.mainContainer}>
         <SectionList
           sections={allVehicles}
