@@ -12,7 +12,7 @@ export default function AppFooter() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 0.075,
+        flex: 0.1,
         backgroundColor: 'fuchsia'
     },
     footer: {
