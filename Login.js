@@ -1,4 +1,5 @@
-import { Text, View, TextInput, StyleSheet, Pressable, Alert } from "react-native";
+import { Text, View, TextInput, StyleSheet, Pressable, Alert,ImageBackground } from "react-native";
+import Icon from 'react-native-vector-icons/FontAwesome'; 
 import { useState } from "react";
 
 const emailValidationRegex = "^[0-9A-Za-z._+]+@[A-Za-z0-9]+.[A-Za-z0-9]+$"
@@ -26,7 +27,12 @@ export default function Login({ navigation }) {
     }
 
     return(
+        <ImageBackground
+      source={require('./assets/icon_sedan.png')}
+      style={styles.backgroundImage}
+    >
         <View style={styles.container}>
+        <Icon name="thumbs-down" size={48} color="red" /> {/* Replace 'thumbs-down' with the desired icon name */}
             <Text style={styles.text}>Registered Email</Text>
             <TextInput
                 style={[styles.input, {color: (validateEmail() ? 'black': 'red')}]}
@@ -51,15 +57,22 @@ export default function Login({ navigation }) {
                 <Text style={styles.link}>Forgot Password</Text>
             </Pressable>
         </View>
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 0.5,
+    backgroundImage: {
+        flex: 1,
+        resizeMode: 'cover',
+        justifyContent: 'center',
+        opacity: 0.8,
+      },
+      container: {
+        flex: 1,
         margin: 8,
         justifyContent: 'space-between',
-    },
+      },
     text: {
         textAlign: 'center',
         fontSize: 24

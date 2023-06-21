@@ -1,5 +1,31 @@
 import { StyleSheet, Text, Image, View, SectionList, Pressable } from 'react-native';
+import { useEffect } from 'react';
+import Orientation from 'react-native-orientation-locker';
+import { useNavigation } from '@react-navigation/native';
+const [showList, setShowList] = useState(false);
 
+
+const [orientation, setOrientation] = useState('portrait');
+
+
+useEffect(() => {
+  const updateOrientation = () => {
+    const currentOrientation = Orientation.getInitialOrientation();
+    setOrientation(currentOrientation);
+  };
+
+  updateOrientation(); // Get the initial orientation
+
+  Orientation.addOrientationListener(updateOrientation);
+
+  return () => {
+    Orientation.removeOrientationListener(updateOrientation);
+  };
+}, []);
+
+const toggleListVisibility = () => {
+  setShowList(!showList);
+};
 const allVehicles = [
   {
     "type": "Sedan",
@@ -66,8 +92,13 @@ const getMenuFromAPI = async () => {
 };
 
 
-export default function Menu() {
 
+export default function Menu() {
+  const navigation = useNavigation();
+
+  const handleLogout = () => {
+    navigation.navigate('Login');
+  };
   // Render the headers of section. Note that the input prop is section and we're using 'type' attribute inside
   const renderSectionHeader = ({ section }) => {
 
@@ -115,16 +146,27 @@ export default function Menu() {
 
   return (
     <View style={styles.mainContainer}>
+      <Pressable onPress={toggleListVisibility}>
+        <Text style={styles.showMenuText}>{showList ? "Hide" : "Show"}</Text>
+      </Pressable>
+      {showList && (
         <SectionList
-        sections={allVehicles}
-        renderItem={renderVehicleModelItem}
-        renderSectionHeader={renderSectionHeader}
-        ItemSeparatorComponent={itemSeparatorComponent}
-        keyExtractor={(item, index) => item.id * (item.id + index)}
+          sections={allVehicles}
+          renderItem={renderVehicleModelItem}
+          renderSectionHeader={renderSectionHeader}
+          ItemSeparatorComponent={itemSeparatorComponent}
+          keyExtractor={(item, index) => item.id * (item.id + index)}
+          horizontal={orientation === 'landscape'} // Set horizontal scrolling for landscape mode
+          contentContainerStyle={orientation === 'landscape' ? styles.horizontalScrollContainer : null}
         />
-        <Pressable onPress={getMenuFromAPI}>
-          <Text style={styles.link}>fetch</Text>
-        </Pressable>
+      )}
+      <Pressable onPress={getMenuFromAPI}>
+        <Text style={styles.link}>fetch</Text>
+      </Pressable>
+      
+      <Pressable onPress={handleLogout}>
+        <Text style={styles.logoutButton}>Logout</Text>
+      </Pressable>
     </View>
   );
 }
@@ -133,6 +175,9 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: 'white'
+  },
+  horizontalScrollContainer: {
+    flexDirection: 'row',
   },
   menuHeader: {
     textAlign: 'center',
