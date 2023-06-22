@@ -7,7 +7,9 @@ const [showList, setShowList] = useState(false);
 
 const [orientation, setOrientation] = useState('portrait');
 
-
+const toggleListVisibility = () => {
+  setShowList(!showList);
+};
 useEffect(() => {
   const updateOrientation = () => {
     const currentOrientation = Orientation.getInitialOrientation();
@@ -23,9 +25,7 @@ useEffect(() => {
   };
 }, []);
 
-const toggleListVisibility = () => {
-  setShowList(!showList);
-};
+
 const allVehicles = [
   {
     "type": "Sedan",
@@ -93,7 +93,7 @@ const getMenuFromAPI = async () => {
 
 
 
-export default function Menu() {
+export default function Menu(navigation) {
   const navigation = useNavigation();
 
   const handleLogout = () => {
@@ -163,7 +163,7 @@ export default function Menu() {
       <Pressable onPress={getMenuFromAPI}>
         <Text style={styles.link}>fetch</Text>
       </Pressable>
-      
+
       <Pressable onPress={handleLogout}>
         <Text style={styles.logoutButton}>Logout</Text>
       </Pressable>
