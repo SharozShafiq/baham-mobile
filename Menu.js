@@ -131,16 +131,85 @@ export default function Menu(navigation) {
 
   // Render each menu item
   const renderVehicleModelItem = ({ item }) => {
+    const isFavorite = this.state.favorites.includes(item);
     return (
+      //Commit Code for 8 A
+      //<TouchableWithoutFeedback
+      //onLongPress={() => this.handleBlockItem(item)} // Handle long-press event
+      //>
+      //<View style={styles.itemContainer}>
+        //<Text style={styles.itemText}>{item}</Text>
+      //</View>
+    //</TouchableWithoutFeedback>
+      <View style={styles.itemContainer}>
+      <Text style={styles.itemText}>{item}</Text>
+      <TouchableWithoutFeedback onPress={() => this.handleToggleFavorite(item)}>
+        <Icon
+          name={isFavorite ? 'star' : 'star-o'} // Use the appropriate icon name based on whether it's a favorite or not
+          size={24}
+          color={isFavorite ? 'gold' : 'black'} // Use the appropriate color based on whether it's a favorite or not
+        />
       <View>
         <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
             <Image style={{ width: 100, height: 100, resizeMode: 'cover' }} source={item.image_url} />
             <Text style={styles.menuItem}>{item.name} ({item.capacity})</Text>
         </View>
       </View>
+      </TouchableWithoutFeedback>
+      </View>
     );
   }
 
+handleBlockItem = (item) => {
+    db.transaction((tx) => {
+      tx.executeSql('INSERT INTO blocked_items (text) VALUES (?);', [item], (tx, result) => {
+        if (result.rowsAffected > 0) {
+          console.log(`Blocked item '${item}' inserted successfully.`);
+        }
+      });
+    });
+  }
+
+  handleToggleFavorite = async (item) => {
+    let favorites = [...this.state.favorites];
+  
+    if (favorites.includes(item)) {
+      // Remove from favorites
+      favorites = favorites.filter((favorite) => favorite !== item);
+    } else {
+      // Add to favorites
+      favorites.push(item);
+    }
+  
+    try {
+      await AsyncStorage.setItem('favorites', JSON.stringify(favorites)); // Store the updated favorites list in AsyncStorage
+      this.setState({ favorites }); // Update the state with the new favorites list
+    } catch (error) {
+      console.error('Error saving favorites:', error);
+    }
+  };
+  constructor=(props)=>{
+    super(props);
+    this.state = {
+      favorites: [], // Initialize the favorites state
+      // ...
+    };
+  }
+  
+  componentDidMount=()=>{
+    this.loadFavorites();
+  }
+  
+  loadFavorites = async () => {
+    try {
+      const favorites = await AsyncStorage.getItem('favorites');
+      if (favorites !== null) {
+        this.setState({ favorites: JSON.parse(favorites) }); // Update the state with the stored favorites
+      }
+    } catch (error) {
+      console.error('Error loading favorites:', error);
+    }
+  };
   // Separator separates items. We're only using an empty view with border for now
   const itemSeparatorComponent = () => <View style={{ borderColor: 'black', borderStyle: "dotted", borderWidth: 1 }}></View>;
 
